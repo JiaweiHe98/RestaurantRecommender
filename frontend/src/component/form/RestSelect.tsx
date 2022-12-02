@@ -167,9 +167,9 @@ const RestSelect = ({
           {picked.map((each) => (
             <RestCardSimple
               key={each.rest.id}
+              restId={each.rest.id}
               name={each.rest.name}
               address={each.rest.address}
-              images={testImgs}
               checked={each.checked}
               toggle={() => checkP(each)}
             />
@@ -240,9 +240,9 @@ const RestSelect = ({
           {selected.map((each) => (
             <RestCardSimple
               key={each.rest.id}
+              restId={each.rest.id}
               name={each.rest.name}
               address={each.rest.address}
-              images={testImgs}
               checked={each.checked}
               toggle={() => checkS(each)}
             />

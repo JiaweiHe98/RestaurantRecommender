@@ -1,24 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Paper, Typography } from '@mui/material';
-import SimpleImageSlider from 'react-simple-image-slider';
-import CheckIcon from '@mui/icons-material/Check';
+import { useQuery, gql } from '@apollo/client';
+import { SliderWrapper } from './SliderWrapper';
 
 interface Props {
+  restId: string;
   name: string;
   address: string;
-  images: Array<string>;
   checked: boolean;
   toggle: () => void;
 }
 
-interface Img {
-  url: string;
-}
+const getPhotoQuery = (id: string) => {
+  return gql`
+    {
+      business(id: "${id}") {
+        photos
+      }
+    }
+  `;
+};
 
-const RestCardSimple = ({ name, address, images, checked, toggle }: Props) => {
-  const imageObjs: Array<Img> = images.map((each) => {
-    return { url: each };
-  });
+const RestCardSimple = ({ restId, name, address, checked, toggle }: Props) => {
+  const [images, setImages] = useState<Array<string>>(['food.png']);
+  const { loading, error, data, refetch } = useQuery(getPhotoQuery(restId));
+
+  useEffect(() => {
+    if (data) {
+      const phtots: Array<string> = [];
+      data.business.photos.forEach((each: string) => phtots.push(each));
+      setImages(phtots);
+    }
+  }, [data, refetch]);
+
+  if (error) {
+    refetch();
+  }
 
   return (
     <Paper
@@ -35,26 +52,18 @@ const RestCardSimple = ({ name, address, images, checked, toggle }: Props) => {
       }}
     >
       <Box onClick={(e) => e.stopPropagation()}>
-        <SimpleImageSlider
-          style={{
-            backgroundColor: 'white',
-            cursor: 'default',
-            // borderRadius: '10px',
-            // overflow: 'hidden',
-          }}
-          width={100}
-          height={100}
-          images={imageObjs}
-          showBullets={false}
-          showNavs={images.length <= 1 ? false : true}
-          navSize={15}
-          navStyle={2}
-          navMargin={6}
-        />
+        {images[0] !== 'food.png' ? (
+          <SliderWrapper images={images} />
+        ) : (
+          <Box>
+            <SliderWrapper images={images} />
+          </Box>
+        )}
       </Box>
       <Box sx={{ p: 2 }}>
         <Typography variant="body1">{name}</Typography>
         <Typography variant="body2">{address}</Typography>
+        {/* <Typography variant="body2">{JSON.stringify(imageObjs)}</Typography> */}
       </Box>
       {checked && (
         <Box
