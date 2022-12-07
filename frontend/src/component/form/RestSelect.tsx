@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 import RestCardSimple from '../restaurant/RestCardSimple';
 import { RestSimple } from '../../util/loadRestIdName';
@@ -26,7 +26,7 @@ export interface RestSimpleStatus {
   checked: boolean;
 }
 
-const testImgs = ['food.png', 'logo192.png'];
+// const testImgs = ['food.png', 'logo192.png'];
 // const testImgs = ['food.png'];
 
 const RestSelect = ({
@@ -176,7 +176,12 @@ const RestSelect = ({
           ))}
         </Box>
         <Box sx={{ mt: 1 }}>
-          <Button variant="contained" onClick={pick} sx={{ width: 150 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={pick}
+            sx={{ width: 150 }}
+          >
             Generate More
           </Button>
           {picked.length > 0 && (
@@ -214,7 +219,7 @@ const RestSelect = ({
         <Box>
           <Typography variant="h6">Restaurants You Like</Typography>
         </Box>
-        {selected.length == 0 && (
+        {selected.length === 0 && (
           <Paper
             variant="outlined"
             sx={{

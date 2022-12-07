@@ -11,6 +11,7 @@ import RestSelect from './form/RestSelect';
 import { RestSimple } from '../util/loadRestIdName';
 import { RestSimpleStatus } from './form/RestSelect';
 import { randomPick } from '../util/randomPick';
+import RestResults from './results/RestResults';
 
 const steps = [
   {
@@ -110,7 +111,7 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
 
   const restSelect = React.useMemo(
     () => <RestSelect {...props} />,
-    [selected, picked, checkedNP, checkedNS, userSearchRes]
+    [selected, picked, checkedNP, checkedNS, userSearchRes, props]
   );
 
   const selectModel = () => {
@@ -134,7 +135,7 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
             <StepContent>
               {activeStep === 0 && restSelect}
               {activeStep === 1 && selectModel()}
-              {activeStep === 2 && selectModel()}
+              {activeStep === 2 && <RestResults />}
               <Box sx={{ mb: 2 }}>
                 <div>
                   <Button
