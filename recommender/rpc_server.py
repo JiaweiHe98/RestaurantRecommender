@@ -24,6 +24,9 @@ class ModelService:
 
     def recommendBaseModel(self, business_ids, received, asking):
         return self.baseModel.recommend(business_ids, received, asking)
+    
+    def recommendFinalModel(self, business_ids, received, asking):
+        return []
 
 
 class RestaurantRecommendationService(RestaurantRecommendation_pb2_grpc.RestaurantRecommendationService):
