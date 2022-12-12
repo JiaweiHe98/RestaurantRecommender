@@ -53,10 +53,10 @@ const RestCardSimple = ({ restId, name, address, checked, toggle }: Props) => {
     >
       <Box onClick={(e) => e.stopPropagation()}>
         {images[0] !== 'food.png' ? (
-          <SliderWrapper images={images} />
+          <SliderWrapper size={100} images={images} />
         ) : (
           <Box>
-            <SliderWrapper images={images} />
+            <SliderWrapper size={100} images={images} />
           </Box>
         )}
       </Box>

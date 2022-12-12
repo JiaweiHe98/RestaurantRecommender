@@ -2,23 +2,18 @@ import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 import RestCardSimple from '../restaurant/RestCardSimple';
 import { RestSimple } from '../../util/loadRestIdName';
-import { randomPick } from '../../util/randomPick';
 import Button from '@mui/material/Button';
+import { randomPick } from '../../util/randomPick';
 import Virtualize from './Virtualize';
 
 interface Props {
   restSimples: Array<RestSimple>;
-  selected: Array<RestSimpleStatus>;
-  setSelected: (newSelected: Array<RestSimpleStatus>) => void;
   picked: Array<RestSimpleStatus>;
   setPicked: (newPicked: Array<RestSimpleStatus>) => void;
-  checkedNP: number;
-  setCheckedNP: (newN: number) => void;
-  checkedNS: number;
-  setCheckedNS: (newN: number) => void;
+  selected: Array<RestSimpleStatus>;
+  setSelected: (newSelected: Array<RestSimpleStatus>) => void;
   userSearchRes: string | null;
-  setUserSearchRes: (newInput: string | null) => void;
-  pick: () => void;
+  setUserSearchRes: (newString: string | null) => void;
 }
 
 export interface RestSimpleStatus {
@@ -31,22 +26,46 @@ export interface RestSimpleStatus {
 
 const RestSelect = ({
   restSimples,
-  selected,
-  setSelected,
   picked,
   setPicked,
-  checkedNP,
-  setCheckedNP,
-  checkedNS,
-  setCheckedNS,
+  selected,
+  setSelected,
   userSearchRes,
   setUserSearchRes,
-  pick,
 }: Props) => {
   // const randomPickARest = () => {
   //   const curPick = randomPick(restSimples, picked, selected);
   //   return curPick;
   // };
+  // const [checkedNP, setCheckedNP] = React.useState(0);
+  // const [checkedNS, setCheckedNS] = React.useState(0);
+
+  const pick = () => {
+    // cannot initialize more than once
+    if (picked.length > 0) {
+      const newPick: Array<RestSimpleStatus> = [];
+
+      picked.forEach((each) => {
+        if (each.checked) {
+          newPick.push(each);
+        } else {
+          const curPick = randomPick(restSimples, selected, [
+            ...picked,
+            ...newPick,
+          ]);
+
+          if (curPick !== null) {
+            newPick.push({
+              rest: curPick,
+              checked: false,
+            });
+          }
+        }
+      });
+
+      setPicked(newPick);
+    }
+  };
 
   const addToSelected = () => {
     const toAdd: Array<RestSimpleStatus> = [];
@@ -81,23 +100,23 @@ const RestSelect = ({
 
     setSelected([...selected, ...toAdd]);
     setPicked(newPick);
-    setCheckedNP(0);
+    // setCheckedNP(0);
   };
 
   const removeFromSelected = () => {
     setSelected(selected.filter((each) => !each.checked));
-    setCheckedNS(0);
+    // setCheckedNS(0);
   };
 
   const checkP = (cur: RestSimpleStatus) => {
     setPicked(
       picked.map((each) => {
         if (cur.rest.id === each.rest.id) {
-          if (cur.checked) {
-            setCheckedNP(checkedNP - 1);
-          } else {
-            setCheckedNP(checkedNP + 1);
-          }
+          // if (cur.checked) {
+          //   setCheckedNP(checkedNP - 1);
+          // } else {
+          //   setCheckedNP(checkedNP + 1);
+          // }
 
           return {
             rest: each.rest,
@@ -114,11 +133,11 @@ const RestSelect = ({
     setSelected(
       selected.map((each) => {
         if (cur.rest.id === each.rest.id) {
-          if (cur.checked) {
-            setCheckedNS(checkedNS - 1);
-          } else {
-            setCheckedNS(checkedNS + 1);
-          }
+          // if (cur.checked) {
+          //   setCheckedNS(checkedNS - 1);
+          // } else {
+          //   setCheckedNS(checkedNS + 1);
+          // }
 
           return {
             rest: each.rest,
@@ -189,7 +208,7 @@ const RestSelect = ({
               sx={{ ml: 1, width: 150 }}
               variant="contained"
               onClick={addToSelected}
-              disabled={checkedNP >= 1 ? false : true}
+              disabled={picked.find((each) => each.checked) === undefined}
             >
               Add to likes
             </Button>
@@ -258,7 +277,7 @@ const RestSelect = ({
             sx={{ mt: 1, width: 150 }}
             variant="contained"
             onClick={removeFromSelected}
-            disabled={checkedNS >= 1 ? false : true}
+            disabled={selected.find((each) => each.checked) === undefined}
           >
             Remove
           </Button>

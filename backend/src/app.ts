@@ -11,12 +11,15 @@ const env = load({
 });
 
 app.use(cors());
+app.use(express.json());
 
 app.get('/', (_req, res) => {
   res.send('Hello World! basic');
 });
 
-app.post('/recommend', (req, res) => {
+app.post('/recomm', (req, res) => {
+  console.log(req.body);
+
   res.send('recommendation');
 });
 

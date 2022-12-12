@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+service RestaurantRecommendationService {
+    rpc getBaseModelRecommendation (UserLikedRestaurants) returns (RecommendedRestaurants){}
+    rpc getFinalModelRecommendation (UserLikedRestaurants) returns (RecommendedRestaurants){}
+}
+
+/* UserLikedRestaurants represents a search query, with pagination options to
+ * indicate how many items the client has received and how many new items the
+ * client want.
+ * @ ids: An array like data structure stores the business ids that the client like
+ * @ received: Number of business ids that the client already has
+ * @ asking: Number of new business ids that the client wants
+ */
+message UserLikedRestaurants {
+    repeated string ids = 1;
+    int32 received = 2;
+    int32 asking = 3;
+}
+
+/* RecommendedRestaurants represents a search result
+ * @ ids: An array like data structure stores the business ids that the model recommends
+ */
+message RecommendedRestaurants {
+    repeated string ids = 1;
+}

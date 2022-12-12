@@ -5,13 +5,15 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import RestSelect from './form/RestSelect';
 import { RestSimple } from '../util/loadRestIdName';
 import { RestSimpleStatus } from './form/RestSelect';
-import { randomPick } from '../util/randomPick';
 import RestResults from './results/RestResults';
+import { randomPick } from '../util/randomPick';
 
 const steps = [
   {
@@ -19,9 +21,6 @@ const steps = [
   },
   {
     label: 'Select the Model to Make Recommendation',
-  },
-  {
-    label: 'Recommendations Based on Your Likes',
   },
 ];
 
@@ -31,46 +30,30 @@ interface Props {
   restSimples: Array<RestSimple>;
 }
 
+const getResult = (
+  selected: Array<RestSimpleStatus>,
+  userSelectModel: string
+) => {
+  return (
+    <RestResults
+      userSelectModel={userSelectModel}
+      selected={selected.map((each) => each.rest.id)}
+    />
+  );
+};
+
 export default function VerticalLinearStepper({ restSimples }: Props) {
   const [activeStep, setActiveStep] = React.useState(0);
 
+  const [picked, setPicked] = React.useState<Array<RestSimpleStatus>>([]);
   // the restaurant that user selected
   const [selected, setSelected] = React.useState<Array<RestSimpleStatus>>([]);
-
-  const [picked, setPicked] = React.useState<Array<RestSimpleStatus>>([]);
-  const [checkedNP, setCheckedNP] = React.useState(0);
-  const [checkedNS, setCheckedNS] = React.useState(0);
   const [userSearchRes, setUserSearchRes] = React.useState<string | null>(null);
 
+  const [userSelectModel, setUserSelectModel] = React.useState<string>('0');
+
   React.useEffect(() => {
-    pick();
-  }, [restSimples]);
-
-  const pick = () => {
-    // cannot initialize more than once
-    if (picked.length > 0) {
-      const newPick: Array<RestSimpleStatus> = [];
-
-      picked.forEach((each) => {
-        if (each.checked) {
-          newPick.push(each);
-        } else {
-          const curPick = randomPick(restSimples, selected, [
-            ...picked,
-            ...newPick,
-          ]);
-
-          if (curPick !== null) {
-            newPick.push({
-              rest: curPick,
-              checked: false,
-            });
-          }
-        }
-      });
-
-      setPicked(newPick);
-    } else {
+    const initPick = () => {
       const newPick: Array<RestSimpleStatus> = [];
       for (let i = 0; i < INITIAL_N_PICK; i++) {
         const curPick = randomPick(restSimples, newPick, []);
@@ -78,9 +61,53 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
           newPick.push({ rest: curPick, checked: false });
         }
       }
-      setPicked([...picked, ...newPick]);
-    }
-  };
+      return newPick;
+    };
+
+    const newPick: Array<RestSimpleStatus> = initPick();
+    setPicked(newPick);
+  }, [restSimples]);
+
+  const select = React.useMemo(() => {
+    const props = {
+      restSimples,
+      picked,
+      setPicked,
+      selected,
+      setSelected,
+      userSearchRes,
+      setUserSearchRes,
+    };
+    // console.log(selected);
+    // console.log('called');
+    return <RestSelect {...props} />;
+  }, [restSimples, picked, selected, userSearchRes]);
+
+  const selectModel = React.useMemo(() => {
+    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUserSelectModel(e.target.value);
+      // console.log(userSelectModel);
+    };
+
+    return (
+      <Box>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          value={userSelectModel}
+          onChange={handleRadioChange}
+          name="radio-buttons-group"
+        >
+          <FormControlLabel value="0" control={<Radio />} label="Base Model" />
+          <FormControlLabel value="1" control={<Radio />} label="Final Model" />
+        </RadioGroup>
+      </Box>
+    );
+  }, [userSelectModel]);
+
+  const results = React.useMemo(
+    () => getResult(selected, userSelectModel),
+    [selected, userSelectModel]
+  );
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -94,29 +121,10 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
     setActiveStep(0);
   };
 
-  const props = {
-    restSimples,
-    selected,
-    setSelected,
-    picked,
-    setPicked,
-    checkedNP,
-    setCheckedNP,
-    checkedNS,
-    setCheckedNS,
-    userSearchRes,
-    setUserSearchRes,
-    pick,
-  };
-
-  const restSelect = React.useMemo(
-    () => <RestSelect {...props} />,
-    [selected, picked, checkedNP, checkedNS, userSearchRes, props]
-  );
-
-  const selectModel = () => {
-    return <Box>hey select model</Box>;
-  };
+  // const restSelect = React.useMemo(
+  //   () => <RestSelect {...props} />,
+  //   [selected, picked, checkedNP, checkedNS, userSearchRes, props]
+  // );
 
   return (
     <Box>
@@ -133,9 +141,8 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
               {step.label}
             </StepLabel>
             <StepContent>
-              {activeStep === 0 && restSelect}
-              {activeStep === 1 && selectModel()}
-              {activeStep === 2 && <RestResults />}
+              {activeStep === 0 && select}
+              {activeStep === 1 && selectModel}
               <Box sx={{ mb: 2 }}>
                 <div>
                   <Button
@@ -160,12 +167,24 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
         ))}
       </Stepper>
       {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
-          </Button>
-        </Paper>
+        <>
+          <Box sx={{ mt: 1 }}>
+            <Box sx={{ display: 'flex', mb: 1 }}>
+              <Box>
+                <Typography variant="h6">
+                  Recommendations Based on Your Likes
+                </Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1 }}></Box>
+              <Box>
+                <Button variant="contained" onClick={handleReset}>
+                  Try Again
+                </Button>
+              </Box>
+            </Box>
+            {results}
+          </Box>
+        </>
       )}
     </Box>
   );

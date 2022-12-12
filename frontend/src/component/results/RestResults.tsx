@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import RestCardFull from '../restaurant/RestCardFull';
+import { Box } from '@mui/material';
+import { getRecomm } from '../../util/getRecommendation';
 
 // export interface Rest {
 //   id: string;
@@ -21,11 +23,26 @@ const testRest = [
   },
 ];
 
-const RestResults = () => {
+interface Props {
+  userSelectModel: string;
+  selected: Array<string>;
+}
+
+const RestResults = ({ userSelectModel, selected }: Props) => {
+  useMemo(() => {
+    const getRes = async () => {
+      const res = getRecomm(selected, userSelectModel);
+    };
+
+    getRes();
+  }, [userSelectModel, selected]);
+
+  // console.log(objectId(userSelectModel));
+
   return (
-    <>
-      <RestCardFull rests={testRest} />
-    </>
+    <Box>
+      <RestCardFull rest={testRest[0]} />
+    </Box>
   );
 };
 
