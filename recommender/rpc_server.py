@@ -7,7 +7,7 @@ import RestaurantRecommendation_pb2_grpc
 import RestaurantRecommendation_pb2
 from concurrent import futures
 
-# from models.FinalModel import recommand_process
+from models.FinalModel import FinalModel
 from models.BaseModel import BaseModel
 
 PORT = 1080
@@ -21,12 +21,13 @@ sys.path.append("..")
 class ModelService:
     def __init__(self) -> None:
         self.baseModel = BaseModel()
+        self.finalModel = FinalModel()
 
     def recommendBaseModel(self, business_ids, received, asking):
         return self.baseModel.recommend(business_ids, received, asking)
     
     def recommendFinalModel(self, business_ids, received, asking):
-        return []
+        return self.finalModel.recommend(business_ids, received, asking);
 
 
 class RestaurantRecommendationService(RestaurantRecommendation_pb2_grpc.RestaurantRecommendationService):
@@ -40,9 +41,10 @@ class RestaurantRecommendationService(RestaurantRecommendation_pb2_grpc.Restaura
         return RestaurantRecommendation_pb2.RecommendedRestaurants(ids=ids)
 
     def getFinalModelRecommendation(self, request, context):
-        # result_ids = recommand_process(request)
-        # return RestaurantRecommendation_pb2.RecommendedRestaurants(ids=result_ids)
-        pass
+        ids = self.modelService.recommendFinalModel(
+            request.ids, request.received, request.asking
+        )
+        return RestaurantRecommendation_pb2.RecommendedRestaurants(ids=ids)
 
 
 def serve():
