@@ -1,5 +1,8 @@
-import express from 'express';
+import express, { response } from 'express';
 import { load } from 'ts-dotenv';
+import { credentials } from 'grpc';
+import { RestaurantRecommendationServiceClient } from '../proto/RestaurantRecommendation_grpc_pb';
+import { UserLikedRestaurants } from '../proto/RestaurantRecommendation_pb';
 import proxy from 'express-http-proxy';
 import cors from 'cors';
 
@@ -16,7 +19,11 @@ const env = load({
   API_KEY: String,
 });
 
-app.use(cors());
+const client = new RestaurantRecommendationServiceClient(
+  'localhost:1080',
+  credentials.createInsecure()
+);
+
 app.use(express.json());
 
 app.get('/', (_req, res) => {
@@ -24,9 +31,28 @@ app.get('/', (_req, res) => {
 });
 
 app.post('/recomm', (req, res) => {
-  console.log(req.body);
+  const request = new UserLikedRestaurants();
+  request.setIdsList(req.body.selected);
+  request.setReceived(0);
+  request.setAsking(20);
 
-  res.json(testRest);
+  if (req.body.model === '0') {
+    client.getBaseModelRecommendation(request, (e, response) => {
+      if (e) {
+        res.status(400).send('error');
+      }
+
+      res.json(response.getIdsList());
+    });
+  } else {
+    client.getFinalModelRecommendation(request, (e, response) => {
+      if (e) {
+        res.status(400).send('error');
+      }
+
+      res.json(response.getIdsList());
+    });
+  }
 });
 
 app.use(

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { url } from './url';
-import { Rest } from '../component/restaurant/Rest';
 
 interface getRecommFunc {
   (selected: Array<string>, model: string): Promise<Array<string>>;
