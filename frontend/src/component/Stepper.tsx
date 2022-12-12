@@ -30,18 +30,6 @@ interface Props {
   restSimples: Array<RestSimple>;
 }
 
-const getResult = (
-  selected: Array<RestSimpleStatus>,
-  userSelectModel: string
-) => {
-  return (
-    <RestResults
-      userSelectModel={userSelectModel}
-      selected={selected.map((each) => each.rest.id)}
-    />
-  );
-};
-
 export default function VerticalLinearStepper({ restSimples }: Props) {
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -97,17 +85,30 @@ export default function VerticalLinearStepper({ restSimples }: Props) {
           onChange={handleRadioChange}
           name="radio-buttons-group"
         >
-          <FormControlLabel value="0" control={<Radio />} label="Base Model" />
-          <FormControlLabel value="1" control={<Radio />} label="Final Model" />
+          <FormControlLabel
+            value="0"
+            control={<Radio />}
+            label="Base Model (Content Based Method)"
+          />
+          <FormControlLabel
+            value="1"
+            control={<Radio />}
+            label="Final Model (Collaborative Filtering)"
+          />
         </RadioGroup>
       </Box>
     );
   }, [userSelectModel]);
 
-  const results = React.useMemo(
-    () => getResult(selected, userSelectModel),
-    [selected, userSelectModel]
-  );
+  const results = React.useMemo(() => {
+    return (
+      <RestResults
+        userSelectModel={userSelectModel}
+        restSimples={restSimples}
+        selected={selected.map((each) => each.rest.id)}
+      />
+    );
+  }, [selected, userSelectModel]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);

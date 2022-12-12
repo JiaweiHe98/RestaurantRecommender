@@ -27,9 +27,9 @@ const RestCardSimple = ({ restId, name, address, checked, toggle }: Props) => {
 
   useEffect(() => {
     if (data) {
-      const phtots: Array<string> = [];
-      data.business.photos.forEach((each: string) => phtots.push(each));
-      setImages(phtots);
+      const photos: Array<string> = [];
+      data.business.photos.forEach((each: string) => photos.push(each));
+      setImages(photos);
     }
   }, [data, refetch]);
 

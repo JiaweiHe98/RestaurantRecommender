@@ -3,6 +3,12 @@ import { load } from 'ts-dotenv';
 import proxy from 'express-http-proxy';
 import cors from 'cors';
 
+const testRest = [
+  'OP-m-Kq-1aEWrrlaszFi9w',
+  '8VsGdezAKZh8atZ0tmVskg',
+  'e8jerbHMWQ1JSYxKtXEt5w',
+];
+
 const app = express();
 const port = 5000;
 
@@ -20,7 +26,7 @@ app.get('/', (_req, res) => {
 app.post('/recomm', (req, res) => {
   console.log(req.body);
 
-  res.send('recommendation');
+  res.json(testRest);
 });
 
 app.use(

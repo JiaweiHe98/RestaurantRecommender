@@ -1,7 +1,15 @@
 import axios from 'axios';
 import { url } from './url';
+import { Rest } from '../component/restaurant/Rest';
 
-export const getRecomm = async (selected: Array<string>, model: string) => {
+interface getRecommFunc {
+  (selected: Array<string>, model: string): Promise<Array<string>>;
+}
+
+export const getRecomm: getRecommFunc = async (
+  selected: Array<string>,
+  model: string
+) => {
   try {
     const json = JSON.stringify({
       selected,
@@ -15,8 +23,9 @@ export const getRecomm = async (selected: Array<string>, model: string) => {
       },
     });
 
-    return res;
+    return res.data;
   } catch (e) {
     console.log(e);
+    return [];
   }
 };

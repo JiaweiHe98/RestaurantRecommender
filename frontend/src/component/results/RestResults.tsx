@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import RestCardFull from '../restaurant/RestCardFull';
 import { Box } from '@mui/material';
 import { getRecomm } from '../../util/getRecommendation';
+import { RestSimple } from '../../util/loadRestIdName';
 
 // export interface Rest {
 //   id: string;
@@ -11,27 +12,32 @@ import { getRecomm } from '../../util/getRecommendation';
 //   photos: Array<string>;
 // }
 
-const testRest = [
-  {
-    id: 'OP-m-Kq-1aEWrrlaszFi9w',
-    name: 'Ramble Pizza',
-    star: 4.5,
-    address: 'Philadelphia, PA 19125',
-    photos: [
-      'https://s3-media3.fl.yelpcdn.com/bphoto/UTcaNwlTczX8PDawXfNBcQ/o.jpg',
-    ],
-  },
-];
+// const testRest = [
+//   {
+//     id: 'OP-m-Kq-1aEWrrlaszFi9w',
+//     name: 'Ramble Pizza',
+//     star: 4.5,
+//     address: 'Philadelphia, PA 19125',
+//     photos: [
+//       'https://s3-media3.fl.yelpcdn.com/bphoto/UTcaNwlTczX8PDawXfNBcQ/o.jpg',
+//     ],
+//   },
+// ];
 
 interface Props {
   userSelectModel: string;
   selected: Array<string>;
+  restSimples: Array<RestSimple>;
 }
 
-const RestResults = ({ userSelectModel, selected }: Props) => {
+const RestResults = ({ userSelectModel, restSimples, selected }: Props) => {
+  const [restIds, setRestIds] = useState<Array<string>>([]);
+
   useMemo(() => {
     const getRes = async () => {
-      const res = getRecomm(selected, userSelectModel);
+      const res = await getRecomm(selected, userSelectModel);
+      console.log(res);
+      setRestIds(res);
     };
 
     getRes();
@@ -41,7 +47,13 @@ const RestResults = ({ userSelectModel, selected }: Props) => {
 
   return (
     <Box>
-      <RestCardFull rest={testRest[0]} />
+      {restIds.map((each) => (
+        <RestCardFull
+          key={each}
+          restId={each}
+          restSimple={restSimples.find((rest) => rest.id === each)}
+        />
+      ))}
     </Box>
   );
 };
