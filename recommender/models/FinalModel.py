@@ -1,40 +1,42 @@
 import pandas as pd
 import os
 
+
 class FinalModel:
-    
+
     def __init__(self) -> None:
-        if not os.path.exists('../assets/review_pos.csv'):
+        if not os.path.exists('./assets/review_pos.csv'):
             raise RuntimeError('No model')
 
-        if not os.path.exists('../assets/cosine_similarities.csv'):
+        if not os.path.exists('./assets/cosine_similarities.csv'):
             raise RuntimeError('No data')
 
-        if not os.path.exists('../assets/business_philly.csv'):
+        if not os.path.exists('./assets/business_philly.csv'):
             raise RuntimeError('No data')
 
         self.review_pos = pd.read_csv("../assets/review_pos.csv")
         self.review_pos.set_index('business_id', inplace=True)
         self.indices = pd.Series(self.review_pos.index)
-        self.cosine_similarities = pd.read_csv("../assets/cosine_similarities.csv", index_col=0)
+        self.cosine_similarities = pd.read_csv(
+            "./assets/cosine_similarities.csv", index_col=0)
         self.cosine_similarities = self.cosine_similarities.to_numpy()
-        self.business_philly = pd.read_csv("../assets/business_philly.csv")
-    
+        self.business_philly = pd.read_csv("./assets/business_philly.csv")
+
     def recommend(self, business_ids, received, asking):
         num = len(business_ids)
         score_series = pd.Series()
         for name in business_ids:
             # Create a list to put top restaurants
             recommend_restaurants = []
-            
+
             # Find the index of the hotel entered
             idx = self.indices[self.indices == name].index[0]
             # idx = indices[indices == name].index
-            
+
             # Find the restaurants with a similar cosine-sim value and order them from bigges number
-            score_series = score_series.append(pd.Series(self.cosine_similarities[idx])).sort_values(ascending=False)
-        
-        
+            score_series = score_series.append(
+                pd.Series(self.cosine_similarities[idx])).sort_values(ascending=False)
+
         # sort all cosine-sim values of visited restaurants
         score_series = score_series.sort_values(ascending=False)
         # print(score_series.iloc[:5])
@@ -44,9 +46,10 @@ class FinalModel:
         # business_id of the top 10 restaurants
         for each in top10_indexes:
             recommend_restaurants.append(list(self.review_pos.index)[each])
-        
+
         return recommend_restaurants[min(received, len(recommend_restaurants) - 1): min(len(recommend_restaurants), received + asking)]
-        
+
+
 if __name__ == '__main__':
     # for test
     model = FinalModel()

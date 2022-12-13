@@ -10,19 +10,21 @@ NONE_FEATURE = 3
 class BaseModel:
 
     def __init__(self) -> None:
-        if not os.path.exists('../assets/neigh.pkl'):
+        print(os.getcwd())
+
+        if not os.path.exists('./assets/neigh.pkl'):
             raise RuntimeError('No model')
 
-        if not os.path.exists('../assets/rest_final.csv'):
+        if not os.path.exists('./assets/rest_final.csv'):
             raise RuntimeError('No data')
 
-        self.data = pd.read_csv('../assets/rest_final.csv')
+        self.data = pd.read_csv('./assets/rest_final.csv')
         self.columns = len(self.data.columns) - NONE_FEATURE
 
         self.id_to_idx = {id: idx for idx,
                           id in enumerate(self.data['business_id'])}
 
-        with open('../assets/neigh.pkl', 'rb') as f:
+        with open('./assets/neigh.pkl', 'rb') as f:
             self.model = pickle.load(f)
 
     def recommend(self, business_ids, received, asking):
