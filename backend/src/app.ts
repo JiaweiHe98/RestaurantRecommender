@@ -13,11 +13,13 @@ const testRest = [
 ];
 
 const app = express();
-const port = 5000;
+const port = 5002;
 
 const env = load({
   API_KEY: String,
 });
+
+app.use(express.static(`${__dirname}/client`));
 
 const client = new RestaurantRecommendationServiceClient(
   'localhost:1080',
@@ -68,6 +70,10 @@ app.use(
     },
   })
 );
+
+app.get('*', (req, res) => {
+  res.sendFile(`${__dirname}/client/index.html`);
+});
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
