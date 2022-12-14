@@ -30,7 +30,11 @@ const Header = () => {
       </Box>
       <Box sx={{ flexGrow: 1 }} />
       <Box>
-        <Button variant="outlined">github</Button>
+        <Button 
+        variant="outlined"
+        onClick={() => {
+          window.location.href = 'https://github.com/JiaweiHe98/RestaurantRecommender';
+        }}>github</Button>
       </Box>
     </Paper>
   );

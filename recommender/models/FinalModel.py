@@ -14,7 +14,7 @@ class FinalModel:
         if not os.path.exists('./assets/business_philly.csv'):
             raise RuntimeError('No data')
 
-        self.review_pos = pd.read_csv("../assets/review_pos.csv")
+        self.review_pos = pd.read_csv("./assets/review_pos.csv")
         self.review_pos.set_index('business_id', inplace=True)
         self.indices = pd.Series(self.review_pos.index)
         self.cosine_similarities = pd.read_csv(
