@@ -4,7 +4,7 @@
 * sudo apt upgrade
 * sudo apt install python3-pip
 
-* pip install numpy scikit-learn pandas numpy
+* pip install numpy scikit-learn pandas
 * python3 -m pip install grpcio
 * pip install --upgrade google-api-python-client
 
