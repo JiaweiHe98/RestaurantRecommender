@@ -6,11 +6,11 @@ import { UserLikedRestaurants } from '../proto/RestaurantRecommendation_pb';
 import proxy from 'express-http-proxy';
 import cors from 'cors';
 
-const testRest = [
-  'OP-m-Kq-1aEWrrlaszFi9w',
-  '8VsGdezAKZh8atZ0tmVskg',
-  'e8jerbHMWQ1JSYxKtXEt5w',
-];
+// const testRest = [
+//   'OP-m-Kq-1aEWrrlaszFi9w',
+//   '8VsGdezAKZh8atZ0tmVskg',
+//   'e8jerbHMWQ1JSYxKtXEt5w',
+// ];
 
 const app = express();
 const port = 5002;

@@ -1,26 +1,31 @@
 import pandas as pd
 import os
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class FinalModel:
+    
+    review_pos_dir = '../assets/review_pos.csv'
+    cosine_similarities_dir = '../assets/cosine_similarities.csv'
 
     def __init__(self) -> None:
-        if not os.path.exists('./assets/review_pos.csv'):
+        if not os.path.exists(self.review_pos_dir):
             raise RuntimeError('No model')
 
-        if not os.path.exists('./assets/cosine_similarities.csv'):
+        if not os.path.exists(self.cosine_similarities_dir):
             raise RuntimeError('No data')
 
-        if not os.path.exists('./assets/business_philly.csv'):
-            raise RuntimeError('No data')
+        # if not os.path.exists('./assets/business_philly.csv'):
+        #     raise RuntimeError('No data')
 
-        self.review_pos = pd.read_csv("./assets/review_pos.csv")
+        self.review_pos = pd.read_csv(self.review_pos_dir)
         self.review_pos.set_index('business_id', inplace=True)
         self.indices = pd.Series(self.review_pos.index)
         self.cosine_similarities = pd.read_csv(
-            "./assets/cosine_similarities.csv", index_col=0)
+            self.cosine_similarities_dir, index_col=0)
         self.cosine_similarities = self.cosine_similarities.to_numpy()
-        self.business_philly = pd.read_csv("./assets/business_philly.csv")
+        # self.business_philly = pd.read_csv("./assets/business_philly.csv")
 
     def recommend(self, business_ids, received, asking):
         num = len(business_ids)
@@ -31,7 +36,8 @@ class FinalModel:
 
             # Find the index of the hotel entered
             idx = self.indices[self.indices == name].index[0]
-            # idx = indices[indices == name].index
+            # print(self.indices[self.indices == name].index)
+            # idx = self.indices[self.indices == name].index
 
             # Find the restaurants with a similar cosine-sim value and order them from bigges number
             score_series = score_series.append(
