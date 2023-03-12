@@ -10,8 +10,10 @@ from concurrent import futures
 from models.FinalModel import FinalModel
 from models.BaseModel import BaseModel
 
-PORT = 1080
+PORT = os.getenv('PORT')
 
+if PORT == None:
+    PORT = 1080
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -54,11 +56,11 @@ def serve():
     )
     server.add_insecure_port(f'[::]:{PORT}')
     server.start()
-    print(f"Listening on port {PORT}")
+    print(f"Now listening on port {PORT}")
     server.wait_for_termination()
 
 
 if __name__ == '__main__':
-    print('Server starts!')
+    print('Server starting!')
     logging.basicConfig()
     serve()

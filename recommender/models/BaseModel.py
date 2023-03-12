@@ -10,7 +10,7 @@ NONE_FEATURE = 3
 class BaseModel:
 
     def __init__(self) -> None:
-        print(os.getcwd())
+        # print(os.getcwd())
 
         if not os.path.exists('../assets/neigh.pkl'):
             raise RuntimeError('No model')
