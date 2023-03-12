@@ -28,13 +28,19 @@ class BaseModel:
             self.model = pickle.load(f)
 
     def recommend(self, business_ids, received, asking):
-        dummys = np.zeros((len(business_ids), self.columns))
+        # dummys = np.zeros((len(business_ids), self.columns))
+        
 
-        for idx, id in enumerate(business_ids):
+        # for idx, id in enumerate(business_ids):
 
-            dummys[idx] = self.data.iloc[self.id_to_idx[id], :-3].values.flatten()
+        #     dummys[idx] = self.data.iloc[self.id_to_idx[id], :-3].values.flatten()
+            
+        idxs = [self.id_to_idx[id] for id in business_ids]
+        dummys = self.data.iloc[idxs, : -3]
+        
 
-        distances, idxs = self.model.kneighbors(np.array(dummys))
+        # distances, idxs = self.model.kneighbors(np.array(dummys))
+        distances, idxs = self.model.kneighbors(dummys)
 
         visited_idx = set([self.id_to_idx[id] for id in business_ids])
         res = {}
