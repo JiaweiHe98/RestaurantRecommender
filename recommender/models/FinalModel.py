@@ -6,8 +6,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class FinalModel:
     
-    review_pos_dir = '../assets/review_pos.csv'
-    cosine_similarities_dir = '../assets/cosine_similarities.csv'
+    review_pos_dir = './assets/review_pos.csv'
+    cosine_similarities_dir = './assets/cosine_similarities.csv'
 
     def __init__(self) -> None:
         if not os.path.exists(self.review_pos_dir):
